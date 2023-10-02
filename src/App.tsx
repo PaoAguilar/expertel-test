@@ -5,6 +5,7 @@ import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import { Grid } from "@mui/material";
 import { useFormik } from "formik";
+import * as yup from "yup";
 
 export interface IFields {
   name: string;
@@ -17,11 +18,21 @@ function App() {
   const [fields, setFields] = useState<any>([]);
   console.log("fields", fields);
 
+  const validationSchema = yup.object(
+    fields.reduce((acc: any, field: IFields) => {
+      acc[field.name] = field.required
+        ? yup.string().required("Required")
+        : yup.string();
+      return acc;
+    }, {})
+  );
+
   const formik = useFormik<any>({
     initialValues: fields.reduce((acc: any, field: any) => {
       acc[field.name] = ""; // Inicializar los valores del formulario basado en los campos obtenidos
       return acc;
     }, {}),
+    validationSchema,
     onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
     },
@@ -56,24 +67,23 @@ function App() {
     <Container component="main" maxWidth="sm" sx={{ mt: "20px" }}>
       <form onSubmit={formik.handleSubmit}>
         <Grid container spacing={2}>
-          {fields.map((field: IFields) => (
-            <Grid item xs={field.columns} key={field.name}>
-              <TextField
-                fullWidth
-                name={field.name}
-                label={field.label}
-                value={formik.values[field.name]}
-                onChange={formik.handleChange}
-                error={
-                  formik.touched[field.name] &&
-                  Boolean(formik.errors[field.name])
-                }
-                // helperText={
-                //   formik.touched[field.name] && formik.errors[field.name]
-                // }
-              />
-            </Grid>
-          ))}
+          {fields.map((field: IFields) => {
+            return (
+              <Grid item xs={field.columns} key={field.name}>
+                <TextField
+                  fullWidth
+                  name={field.name}
+                  label={field.label}
+                  value={formik.values[field.name]}
+                  onChange={formik.handleChange}
+                  error={
+                    formik.touched[field.name] &&
+                    Boolean(formik.errors[field.name])
+                  }
+                />
+              </Grid>
+            );
+          })}
         </Grid>
         <Box sx={{ mt: 3 }}>
           <Button type="submit" fullWidth variant="contained" color="primary">
