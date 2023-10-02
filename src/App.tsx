@@ -45,7 +45,7 @@ function App() {
         alert(data.success && "Submmited successfully");
         alert(JSON.stringify(values, null, 2));
       } catch (error) {
-        console.error("Error sending the form", error);
+        alert("Error sending the form");
       }
     },
   });
