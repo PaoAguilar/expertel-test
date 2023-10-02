@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import TextField from "@mui/material/TextField";
+import { Grid } from "@mui/material";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
-import { Grid } from "@mui/material";
+import TextField from "@mui/material/TextField";
 import { useFormik } from "formik";
+import { useEffect, useState } from "react";
 import * as yup from "yup";
 
 export interface IFields {
@@ -15,7 +15,7 @@ export interface IFields {
 }
 
 function App() {
-  const [fields, setFields] = useState<any>([]);
+  const [fields, setFields] = useState<IFields[]>([]);
 
   const validationSchema = yup.object(
     fields.reduce((acc: any, field: IFields) => {
@@ -27,7 +27,7 @@ function App() {
   );
 
   const formik = useFormik<any>({
-    initialValues: fields.reduce((acc: any, field: any) => {
+    initialValues: fields.reduce((acc: any, field: IFields) => {
       acc[field.name] = "";
       return acc;
     }, {}),
@@ -60,7 +60,7 @@ function App() {
         const data = await response.json();
         setFields(data);
         formik.resetForm({
-          values: data.reduce((acc: any, field: any) => {
+          values: data.reduce((acc: any, field: IFields) => {
             acc[field.name] = "";
             return acc;
           }, {}),
