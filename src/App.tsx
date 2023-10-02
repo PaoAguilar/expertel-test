@@ -16,7 +16,6 @@ export interface IFields {
 
 function App() {
   const [fields, setFields] = useState<any>([]);
-  console.log("fields", fields);
 
   const validationSchema = yup.object(
     fields.reduce((acc: any, field: IFields) => {
@@ -29,12 +28,25 @@ function App() {
 
   const formik = useFormik<any>({
     initialValues: fields.reduce((acc: any, field: any) => {
-      acc[field.name] = ""; // Inicializar los valores del formulario basado en los campos obtenidos
+      acc[field.name] = "";
       return acc;
     }, {}),
     validationSchema,
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+    onSubmit: async (values) => {
+      try {
+        const response = await fetch("https://devtest.juancg.ca/form/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
+        });
+        const data = await response.json();
+        alert(data.success && "Submmited successfully");
+        alert(JSON.stringify(values, null, 2));
+      } catch (error) {
+        console.error("Error sending the form", error);
+      }
     },
   });
 
