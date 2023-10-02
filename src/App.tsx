@@ -26,7 +26,7 @@ function App() {
     }, {})
   );
 
-  const formik = useFormik<any>({
+  const formik = useFormik({
     initialValues: fields.reduce((acc: any, field: IFields) => {
       acc[field.name] = "";
       return acc;
@@ -54,9 +54,6 @@ function App() {
     const fetchData = async () => {
       try {
         const response = await fetch("https://devtest.juancg.ca/form/");
-        if (!response.ok) {
-          throw new Error("Network response was not ok " + response.statusText);
-        }
         const data = await response.json();
         setFields(data);
         formik.resetForm({
